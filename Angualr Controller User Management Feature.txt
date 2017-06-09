@@ -1,0 +1,87 @@
+		(function () {
+            "use strict";
+            angular.module(APPNAME).controller('userRoleController', userRoleController);
+            userRoleController.$inject = ['$scope', '$baseController', '$userRoleService'];
+
+            function userRoleController($scope, $baseController, $userRoleService) {
+                var vm = this;
+
+                // vm depedncies intialization //
+                vm.$userRoleService = $userRoleService;
+                vm.notify = vm.$userRoleService.getNotifier($scope);
+
+                // vm properties //
+                $baseController.merge(vm, $baseController);
+
+                // vm Utils//
+                vm.verifyRole = _verifyRole;
+                vm.onChangeRole = _onChangeRole;
+				vm.$onInit = _render;
+
+                function _render() {
+                    vm.$systemEventService.listen('searchBlockedUser', _onFindBlockedUsers);
+                }
+				
+			function _onChangeRole(user, userRoleId) {
+                    var userRoleIndex = indexOfRole(user, userRoleId)
+                    var userHasRole = hasRole(user, userRoleId)
+                    vm.item = user
+                    vm.itemIndex = userRoleIndex
+
+                    vm.currentRole = {
+                        roleId: userRoleId
+                    }
+
+                    var thisUserRole = {
+                        userId: user.id
+                       ,roleId: userRoleId
+                    }
+
+                    if (!userHasRole || user.roles.length == 0) {
+                        $userRoleService.addNewRole(thisUserRole, _onAddSuccess, _onError)
+                    }
+                    else {
+                        $userRoleService.deleteRoleId(thisUserRole, _onDeleteSuccess, _onError)
+                    }
+                }
+				
+				function indexOfRole(user, userRoleId, userRoleName) {
+                    var thisUserIndexOfRole = -1;
+                    if (user.roles != null) {
+                        for (var i = 0; i < user.roles.length; i++) {
+                            var currentRole = user.roles[i];
+                            if (currentRole.roleId == userRoleId) {
+                                thisUserIndexOfRole = i;
+                            }
+                        }
+                    }
+                    return thisUserIndexOfRole;
+                }
+				
+				// Ajax Responses //
+				 function _onAddSuccess(resp) {
+                    vm.notify(function () {
+                        if (!vm.item.roles) {
+                            vm.item.roles = [];
+                            vm.item.roles.push(vm.currentRole);
+                        }
+                        else {
+                            vm.item.roles.push(vm.currentRole);
+                        }
+                        vm.$alertService.success("User Has New Role!")
+                    })
+                }
+				
+				function _onDeleteSuccess(resp, userData) {
+                
+                    vm.notify(function () {
+                        vm.item.roles.splice(vm.itemIndex, 1);
+                        vm.$alertService.warning("User No Longer Has Role!")
+                    })
+                }
+				
+				function _onError(resp) {
+                    console.log("Error ", resp);
+                }
+				
+			})();
