@@ -1,0 +1,46 @@
+ (function () {
+            "use strict";
+            angular.module(APPNAME).controller("SearchSettingsController", SearchSettingsController);
+
+            SearchSettingsController.$inject = ['$scope', '$baseController'];
+
+            function SearchSettingsController($scope, $baseController) {
+                var vm = this;
+				
+				// vm depedncies intialization //
+                $baseController.merge(vm, $baseController);
+                vm.findBlockedUsers = _findBlockedUsers
+
+                vm.$onInit = _render;
+				
+				function _render() {
+				_resetSearchSettings()
+				}				
+				  
+                function _resetSearchSettings() {
+                    vm.blockStatus = 'Status';
+                    vm.adminRole = 'Roles';
+                    vm.accountType = 'Type'
+                    vm.searchStatus = 'All Users'
+                    vm.searchStatusText = ''
+                }
+				
+                function _findBlockedUsers(searchBlockedUser, payload) {
+                    _resetSearchSettings()
+                    if (payload == 1) {
+                        vm.blockStatus = 'Blocked'
+                        vm.searchStatus = 'Blocked Users'
+                        vm.oldSearchStatus = 'Blocked Users'
+                    }
+                    else {
+                        vm.blockStatus = 'Not Blocked'
+                        vm.searchStatus = 'Not Blocked Users'
+                        vm.oldSearchStatus = 'Not Blocked Users'
+
+                    }
+                    vm.searchStatusText = ''
+                    vm.$systemEventService.broadcast(searchBlockedUser, { lockoutEnabled: payload });
+                }
+                           
+            }
+        })();
