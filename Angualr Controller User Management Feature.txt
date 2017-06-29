@@ -9,20 +9,18 @@
                 // vm depedncies intialization //
                 vm.$userRoleService = $userRoleService;
                 vm.notify = vm.$userRoleService.getNotifier($scope);
-
-                // vm properties //
                 $baseController.merge(vm, $baseController);
 
                 // vm Utils//
                 vm.verifyRole = _verifyRole;
                 vm.onChangeRole = _onChangeRole;
-				vm.$onInit = _render;
+		vm.$onInit = _render;
 
                 function _render() {
                     vm.$systemEventService.listen('searchBlockedUser', _onFindBlockedUsers);
                 }
 				
-			function _onChangeRole(user, userRoleId) {
+		function _onChangeRole(user, userRoleId) {
                     var userRoleIndex = indexOfRole(user, userRoleId)
                     var userHasRole = hasRole(user, userRoleId)
                     vm.item = user
@@ -45,7 +43,7 @@
                     }
                 }
 				
-				function indexOfRole(user, userRoleId, userRoleName) {
+		function indexOfRole(user, userRoleId, userRoleName) {
                     var thisUserIndexOfRole = -1;
                     if (user.roles != null) {
                         for (var i = 0; i < user.roles.length; i++) {
@@ -58,8 +56,8 @@
                     return thisUserIndexOfRole;
                 }
 				
-				// Ajax Responses //
-				 function _onAddSuccess(resp) {
+		// Ajax Responses //
+		function _onAddSuccess(resp) {
                     vm.notify(function () {
                         if (!vm.item.roles) {
                             vm.item.roles = [];
@@ -72,15 +70,14 @@
                     })
                 }
 				
-				function _onDeleteSuccess(resp, userData) {
-                
+		function _onDeleteSuccess(resp, userData) {                
                     vm.notify(function () {
                         vm.item.roles.splice(vm.itemIndex, 1);
                         vm.$alertService.warning("User No Longer Has Role!")
                     })
                 }
 				
-				function _onError(resp) {
+		function _onError(resp) {
                     console.log("Error ", resp);
                 }
 				
