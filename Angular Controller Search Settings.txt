@@ -7,15 +7,15 @@
             function SearchSettingsController($scope, $baseController) {
                 var vm = this;
 				
-				// vm depedncies intialization //
+		// vm depedncies intialization //
                 $baseController.merge(vm, $baseController);
                 vm.findBlockedUsers = _findBlockedUsers
 
                 vm.$onInit = _render;
 				
-				function _render() {
-				_resetSearchSettings()
-				}				
+		function _render() {
+			_resetSearchSettings()
+		}				
 				  
                 function _resetSearchSettings() {
                     vm.blockStatus = 'Status';
@@ -40,7 +40,6 @@
                     }
                     vm.searchStatusText = ''
                     vm.$systemEventService.broadcast(searchBlockedUser, { lockoutEnabled: payload });
-                }
-                           
+                }                           
             }
         })();
